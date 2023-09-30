@@ -1,0 +1,157 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+
+
+####-----------------OPEN PRICE PROJECTIONS BY SECTOR FROM EIA.GOV--------------------------
+
+dataFileUrl = "https://www.eia.gov/outlooks/aeo/excel/aeotab3.xlsx"
+
+####-----------------READ PRICE PROJECTIONS .XLSX FILE TO DATAFRAME--------------------------
+
+df = pd.read_excel(dataFileUrl, 
+                   header=[12])
+
+####-----------------CLEAN UP HEADERS, COMBINE SECTOR + SOURCE TO A SINGLE LABEL (e.g. Residential: Propane)-------------
+
+df = df.rename(columns={' Sector and Source':'Sector and Source'})
+
+df['Sector and Source'] = df['Sector and Source'].str.strip()
+
+nd_array_sector_source1 = np.array(df.loc[2:5,'Sector and Source'])
+
+nd_array_sector_source1 = 'Residential: ' + nd_array_sector_source1
+
+nd_array_sector_source2 = np.array(df.loc[8:12,'Sector and Source'])
+
+nd_array_sector_source2 = 'Commercial: ' + nd_array_sector_source2
+
+nd_array_sector_source3 = np.array(df.loc[15:22,'Sector and Source'])
+
+nd_array_sector_source3 = 'Industrial: ' + nd_array_sector_source3
+
+nd_array_sector_source4 = np.array(df.loc[25:32,'Sector and Source'])
+
+nd_array_sector_source4 = 'Transportation: ' + nd_array_sector_source4
+
+nd_array_sector_source5 = np.array(df.loc[35:39,'Sector and Source'])
+
+nd_array_sector_source5 = 'Electric Power: ' + nd_array_sector_source5
+
+nd_array_sector_source6 = np.array(df.loc[43:53,'Sector and Source'])
+
+nd_array_sector_source6 = 'Average Price to All Users: ' + nd_array_sector_source6
+
+#####-----------------CREATE % GROWTH ARRAY, not used--------------------------
+
+# avg_annual_change1 = np.array(df.loc[2:5,'2022–2050'])
+
+# avg_annual_change1 = avg_annual_change1.astype(float) * 100
+
+# avg_annual_change1 = np.round(avg_annual_change1,decimals=1)
+
+####-----------------CREATE DATAFRAME/PLOT FOR RESIDENTIAL PRICES--------------------------
+
+values_sector_1 = np.array([df.loc[2:5,2023],df.loc[2:5,2030],df.loc[2:5,2040],df.loc[2:5,2050]])
+
+values_sector_1 = values_sector_1.astype(float)
+
+values_sector_1 = np.round(values_sector_1,decimals=2)                      
+
+residential_table = pd.DataFrame(values_sector_1,columns=nd_array_sector_source1,index=['2023','2030','2040','2050'])
+
+plt.style.use('ggplot')
+
+plot1 = residential_table.plot(rot=45,kind='line')
+
+####-----------------CREATE DATAFRAME/PLOT FOR COMMERCIAL PRICES--------------------------
+
+values_sector_2 = np.array([df.loc[8:12,2023],df.loc[8:12,2030],df.loc[8:12,2040],df.loc[8:12,2050]])
+
+values_sector_2 = values_sector_2.astype(float)
+
+values_sector_2 = np.round(values_sector_2,decimals=2)
+
+commercial_table = pd.DataFrame(values_sector_2,columns=nd_array_sector_source2,index=['2023','2030','2040','2050'])
+
+plt.style.use('ggplot')
+
+plot2 = commercial_table.plot(rot=45,kind='line')
+
+####-----------------CREATE DATAFRAME/PLOT FOR INDUSTRIAL PRICES--------------------------
+
+
+values_sector_3 = np.array([df.loc[15:22,2023],df.loc[15:22,2030],df.loc[15:22,2040],df.loc[15:22,2050]])
+
+values_sector_3[:,6] = 0.00
+
+values_sector_3 = values_sector_3.astype(float)
+
+values_sector_3 = np.round(values_sector_3,decimals=2)
+
+industrial_table = pd.DataFrame(values_sector_3,columns=nd_array_sector_source3,index=['2023','2030','2040','2050'])
+
+plt.style.use('ggplot')
+
+plot3 = industrial_table.plot(rot=45,kind='line')
+
+####-----------------CREATE DATAFRAME/PLOT FOR TRANSPORTATION PRICES--------------------------
+
+
+values_sector_4 = np.array([df.loc[25:32,2023],df.loc[25:32,2030],df.loc[25:32,2040],df.loc[25:32,2050]])
+
+values_sector_4 = values_sector_4.astype(float)
+
+values_sector_4 = np.round(values_sector_4,decimals=2)
+
+transportation_table = pd.DataFrame(values_sector_4,columns=nd_array_sector_source4,index=['2023','2030','2040','2050'])
+
+plt.style.use('ggplot')
+
+plot4 = transportation_table.plot(rot=45,kind='line')
+
+####-----------------CREATE DATAFRAME/PLOT FOR ELECTRIC POWER PRICES--------------------------
+
+values_sector_5 = np.array([df.loc[35:39,2023],df.loc[35:39,2030],df.loc[35:39,2040],df.loc[35:39,2050]])
+
+values_sector_5 = values_sector_5.astype(float)
+
+values_sector_5 = np.round(values_sector_5,decimals=2)
+
+electric_power_table = pd.DataFrame(values_sector_5,columns=nd_array_sector_source5,index=['2023','2030','2040','2050'])
+
+
+plt.style.use('ggplot')
+
+plot5 = electric_power_table.plot(rot=45,kind='line')
+
+
+####-----------------PRINT ALL 5 DATA FRAMES AND CORRESPONDING PLOTS--------------------------
+
+print(residential_table,plot1)
+
+print(commercial_table,plot2)
+
+print(industrial_table,plot3)
+
+print(transportation_table,plot4)
+
+print(electric_power_table,plot5)
+
+
+####-----------------COMBINE ALL 5 DATA FRAMES--------------------------------------------------
+
+
+price_projections = [residential_table,
+                     commercial_table,
+                     industrial_table,
+                     transportation_table,
+                     electric_power_table]
+
+
+price_projections = pd.concat(price_projections,axis=1)
+
+
+####-----------------PRINT ALL PRICE PROJECTION DATA---------------------------------------------
+
+print(price_projections)
